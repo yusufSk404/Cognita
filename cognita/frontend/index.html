@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cognita — Study Any Subject, Instantly Quizzed</title>
+<meta name="description" content="Cognita is an AI study companion. Search any subject, ask questions, and generate instant quizzes." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<canvas id="constellation" aria-hidden="true"></canvas>
+<div id="cursor-dot" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
+
+<div class="app">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">C</span>
+      <span class="brand-name">Cognita</span>
+    </div>
+    <nav class="mode-toggle" role="tablist" aria-label="Study mode">
+      <button class="mode-btn active" data-mode="chat" role="tab" aria-selected="true">Ask &amp; Explain</button>
+      <button class="mode-btn" data-mode="quiz" role="tab" aria-selected="false">Instant Quiz</button>
+    </nav>
+  </header>
+
+  <!-- Hero / subject search -->
+  <section class="hero">
+    <p class="eyebrow">An AI study companion for any subject</p>
+    <h1 class="hero-title">Search a subject.<br><span class="highlight">Start learning</span> instantly.</h1>
+
+    <form id="subject-form" class="subject-search" autocomplete="off">
+      <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+        <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <input id="subject-input" type="text" placeholder="Type any subject — Organic Chemistry, World History, Linear Algebra…" required />
+      <button type="submit" class="go-btn">Go</button>
+    </form>
+
+    <div class="chip-row" aria-label="Popular subjects">
+      <span class="chip-label">Try:</span>
+      <button type="button" class="chip" data-subject="Database Systems">Database Systems</button>
+      <button type="button" class="chip" data-subject="World History">World History</button>
+      <button type="button" class="chip" data-subject="Organic Chemistry">Organic Chemistry</button>
+      <button type="button" class="chip" data-subject="Microeconomics">Microeconomics</button>
+      <button type="button" class="chip" data-subject="Linear Algebra">Linear Algebra</button>
+    </div>
+
+    <div class="active-subject hidden" id="active-subject">
+      <span class="active-subject-label">Studying now</span>
+      <span class="active-subject-name" id="active-subject-name"></span>
+      <button type="button" id="change-subject-btn" class="text-btn">Change</button>
+    </div>
+  </section>
+
+  <!-- Main panel -->
+  <main class="panel hidden" id="main-panel">
+
+    <!-- Chat mode -->
+    <section id="chat-view" class="view active">
+      <div id="chat-log" class="chat-log">
+        <div class="msg msg-assistant">
+          <div class="msg-label">Cognita</div>
+          <div class="msg-body" id="chat-welcome">Ask me anything about your subject — a concept you're stuck on, an exam-style question, or "explain this with an example." I'll answer live, right here.</div>
+        </div>
+      </div>
+      <form id="chat-form" class="composer">
+        <textarea id="chat-input" placeholder="Ask a question…" rows="1" required></textarea>
+        <button type="submit" class="send-btn" aria-label="Send">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 11l18-8-8 18-2-8-8-2z"/></svg>
+        </button>
+      </form>
+    </section>
+
+    <!-- Quiz mode -->
+    <section id="quiz-view" class="view">
+      <div class="quiz-setup" id="quiz-setup">
+        <h2>Generate a quiz</h2>
+        <p class="muted" id="quiz-subject-line">Uses the subject you searched above.</p>
+
+        <label class="field-label" for="topic-input">Narrow it down (optional)</label>
+        <input id="topic-input" class="text-input" type="text" placeholder="Leave blank for a mixed quiz, or type a specific topic — e.g. Second Normal Form" />
+
+        <div class="quiz-options-row">
+          <div>
+            <label class="field-label" for="num-q">Questions</label>
+            <select id="num-q" class="select select-sm">
+              <option>3</option>
+              <option selected>5</option>
+              <option>8</option>
+              <option>10</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label" for="difficulty">Difficulty</label>
+            <select id="difficulty" class="select select-sm">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="generate-quiz-btn" class="primary-btn">Generate quiz</button>
+        <p id="quiz-error" class="error-text"></p>
+      </div>
+
+      <div id="quiz-runner" class="quiz-runner hidden">
+        <div class="quiz-progress">
+          <span id="quiz-progress-text">Question 1</span>
+          <button id="quiz-restart-btn" class="link-btn">Start over</button>
+        </div>
+        <div id="quiz-question-card" class="quiz-card"></div>
+        <div id="quiz-score" class="quiz-score hidden"></div>
+      </div>
+
+      <div id="quiz-loading" class="quiz-loading hidden">
+        <div class="spinner"></div>
+        <p>Writing your questions…</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
