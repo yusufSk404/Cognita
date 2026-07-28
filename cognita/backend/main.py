@@ -1,15 +1,3 @@
-"""
-Cognita — backend server
--------------------------
-FastAPI app that:
-  1. Serves the static frontend (HTML/CSS/JS)
-  2. Exposes a streaming chat endpoint that forwards prompts to the OpenAI API
-  3. Exposes a quiz-generation endpoint that returns structured JSON questions
-     for ANY subject and (optionally) any topic the user types in
-
-Security: the OpenAI API key is read from an environment variable
-(OPENAI_API_KEY) and never sent to, or accepted from, the browser.
-"""
 
 import json
 import os
@@ -38,9 +26,7 @@ client = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL) if OPENAI_API_
 
 app = FastAPI(title="Cognita")
 
-# CORS is left open here because the frontend is served by this same backend
-# in production. If you split frontend/backend onto different domains,
-# restrict allow_origins to your actual frontend URL.
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -60,7 +46,7 @@ SYSTEM_PROMPT = (
 
 
 class ChatMessage(BaseModel):
-    role: str  # "user" or "assistant"
+    role: str  
     content: str
 
 
@@ -73,7 +59,7 @@ class QuizRequest(BaseModel):
     subject: str
     topic: Optional[str] = None
     num_questions: int = 5
-    difficulty: str = "medium"  # easy | medium | hard
+    difficulty: str = "medium"  
 
 
 def build_messages(req: ChatRequest):
@@ -102,10 +88,10 @@ async def chat(req: ChatRequest):
             for chunk in stream:
                 delta = chunk.choices[0].delta.content if chunk.choices else None
                 if delta:
-                    # SSE format: each event is "data: <json>\n\n"
+                   
                     yield f"data: {json.dumps({'token': delta})}\n\n"
             yield "data: [DONE]\n\n"
-        except Exception as exc:  # surfaced to client as a final error event
+        except Exception as exc: 
             yield f"data: {json.dumps({'error': str(exc)})}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
@@ -160,7 +146,7 @@ async def health():
     return {"status": "ok", "model": OPENAI_MODEL, "api_key_configured": client is not None}
 
 
-# Serve the frontend last so /api/* routes above take priority.
+
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
 if FRONTEND_DIR.exists():
     app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
