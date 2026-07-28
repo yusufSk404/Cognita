@@ -1,6 +1,3 @@
-/* ============================================================
-   Cognita — design tokens
-   ============================================================ */
 :root {
   --ink: #0b0d17;
   --ink-2: #12152447;
@@ -65,9 +62,6 @@ body {
 
 a { color: var(--cyan); }
 
-/* ============================================================
-   Custom dynamic cursor + constellation background
-   ============================================================ */
 #constellation {
   position: fixed;
   inset: 0;
@@ -110,9 +104,6 @@ a { color: var(--cyan); }
   background: var(--cyan-soft);
 }
 
-/* ============================================================
-   Layout shell
-   ============================================================ */
 .app {
   position: relative;
   z-index: 1;
@@ -183,9 +174,6 @@ a { color: var(--cyan); }
 
 .mode-btn:hover:not(.active) { color: var(--paper); }
 
-/* ============================================================
-   Hero
-   ============================================================ */
 .hero {
   padding: 64px 0 20px;
   text-align: center;
@@ -354,9 +342,6 @@ a { color: var(--cyan); }
 
 .hidden { display: none !important; }
 
-/* ============================================================
-   Main panel
-   ============================================================ */
 .panel {
   margin-top: 40px;
   background: var(--panel);
@@ -374,7 +359,6 @@ a { color: var(--cyan); }
 .view { display: none; }
 .view.active { display: flex; flex-direction: column; }
 
-/* ---- Chat ---- */
 #chat-view { min-height: 460px; }
 
 .chat-log {
@@ -452,7 +436,6 @@ a { color: var(--cyan); }
 
 .send-btn:hover { background: #ffd579; transform: translateY(-1px); }
 
-/* ---- Quiz ---- */
 #quiz-view { padding: 32px; }
 
 .quiz-setup h2 {
@@ -648,19 +631,14 @@ a { color: var(--cyan); }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Scrollbar */
 .chat-log::-webkit-scrollbar { width: 8px; }
 .chat-log::-webkit-scrollbar-thumb { background: var(--elevated); border-radius: 4px; }
 
-/* Focus visibility for keyboard users */
 button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline: 2px solid var(--cyan);
   outline-offset: 2px;
 }
 
-/* ============================================================
-   Responsive
-   ============================================================ */
 @media (max-width: 640px) {
   .app { padding: 20px 16px 48px; }
   .hero { padding: 40px 0 10px; }
