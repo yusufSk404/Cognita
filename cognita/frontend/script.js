@@ -1,8 +1,5 @@
 "use strict";
 
-/* ============================================================
-   Dynamic cursor + constellation background
-   ============================================================ */
 (function initCursorFX() {
   const isCoarse = window.matchMedia("(hover: none), (pointer: coarse)").matches;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -26,9 +23,6 @@
   window.addEventListener("resize", resize);
   resize();
 
-  // Ambient particles ("knowledge nodes") that drift, plus a trail that
-  // follows the pointer and connects nearby nodes — a small constellation
-  // forming wherever the learner's attention goes.
   const NODE_COUNT = 46;
   const nodes = Array.from({ length: NODE_COUNT }, () => ({
     x: Math.random() * window.innerWidth,
@@ -61,7 +55,6 @@
 
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-    // Drift ambient nodes
     for (const n of nodes) {
       n.x += n.vx;
       n.y += n.vy;
@@ -69,7 +62,6 @@
       if (n.y < 0 || n.y > window.innerHeight) n.vy *= -1;
     }
 
-    // Connect nearby ambient nodes faintly
     ctx.lineWidth = 1;
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
@@ -92,7 +84,6 @@
       ctx.fill();
     }
 
-    // Connect cursor trail to nearby ambient nodes — the "constellation" signature
     trail.forEach((p, idx) => {
       const alpha = (idx / trail.length) * 0.5;
       for (const n of nodes) {
@@ -112,13 +103,10 @@
   requestAnimationFrame(tick);
 })();
 
-/* ============================================================
-   App state
-   ============================================================ */
 const state = {
   subject: null,
-  chatHistory: [], // {role, content}
-  quiz: null,      // {questions: [...]}
+  chatHistory: [],
+  quiz: null,
   quizIndex: 0,
   quizScore: 0,
 };
@@ -155,9 +143,6 @@ const el = {
   quizLoading: document.getElementById("quiz-loading"),
 };
 
-/* ============================================================
-   Subject search
-   ============================================================ */
 function setSubject(subject) {
   state.subject = subject.trim();
   el.subjectInput.value = state.subject;
@@ -173,7 +158,6 @@ function setSubject(subject) {
   );
   state.chatHistory = [];
 
-  // Reset quiz to setup state for the new subject
   state.quiz = null;
   el.quizSetup.classList.remove("hidden");
   el.quizRunner.classList.add("hidden");
@@ -202,9 +186,6 @@ el.changeSubjectBtn.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
-/* ============================================================
-   Mode switching
-   ============================================================ */
 el.modeBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
     el.modeBtns.forEach((b) => {
@@ -220,9 +201,6 @@ el.modeBtns.forEach((btn) => {
   });
 });
 
-/* ============================================================
-   Chat (streaming)
-   ============================================================ */
 function appendMessage(role, content) {
   const wrap = document.createElement("div");
   wrap.className = `msg msg-${role}`;
@@ -277,7 +255,7 @@ el.chatForm.addEventListener("submit", async (e) => {
       buffer += decoder.decode(value, { stream: true });
 
       const lines = buffer.split("\n\n");
-      buffer = lines.pop(); // keep incomplete chunk
+      buffer = lines.pop();
 
       for (const line of lines) {
         if (!line.startsWith("data: ")) continue;
@@ -292,9 +270,7 @@ el.chatForm.addEventListener("submit", async (e) => {
           } else if (parsed.error) {
             throw new Error(parsed.error);
           }
-        } catch (_) {
-          /* ignore partial JSON */
-        }
+        } catch (_) {}
       }
     }
 
@@ -305,9 +281,6 @@ el.chatForm.addEventListener("submit", async (e) => {
   }
 });
 
-/* ============================================================
-   Quiz
-   ============================================================ */
 el.generateBtn.addEventListener("click", async () => {
   el.quizError.textContent = "";
   el.quizSetup.classList.add("hidden");
